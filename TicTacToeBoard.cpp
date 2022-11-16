@@ -1,4 +1,5 @@
 #include "TicTacToeBoard.h"
+#include <iostream>
 /**
  * Class for representing a 3x3 Tic-Tac-Toe game board, using the Piece enum
  * to represent the spaces on the board.
@@ -19,21 +20,44 @@ TicTacToeBoard::TicTacToeBoard()
 **/
 Piece TicTacToeBoard::toggleTurn()
 {
-  return Invalid;
+  if(turn == X)
+  {
+    turn = O;
+    return O;
+  }
+  else
+  {
+    turn = X;
+    return X;
+  }
 }
 
 /**
  * Places the piece of the current turn on the board, returns what
- * piece is placed, and toggles which Piece's turn it is. placePiece does 
+ * piece is placed, and toggles which Piece's turn it is. placePiece does
  * NOT allow to place a piece in a location where there is already a piece.
- * In that case, placePiece just returns what is already at that location. 
+ * In that case, placePiece just returns what is already at that location.
  * Out of bounds coordinates return the Piece Invalid value. When the game
  * is over, no more pieces can be placed so attempting to place a piece
  * should neither change the board nor change whose turn it is.
-**/ 
+**/
 Piece TicTacToeBoard::placePiece(int row, int column)
 {
-  return Invalid;
+  if(row < 0 || row > 2 || column < 0 || column > 2)
+  {
+    return Invalid;
+  }
+  else if(board[row][column] == X || board[row][column] == O || getWinner() != Invalid)
+  {
+    return board[row][column];
+  }
+  else
+  {
+    board[row][column] = turn;
+    toggleTurn();
+    return board[row][column];
+  }
+
 }
 
 /**
@@ -42,7 +66,11 @@ Piece TicTacToeBoard::placePiece(int row, int column)
 **/
 Piece TicTacToeBoard::getPiece(int row, int column)
 {
-  return Invalid;
+  if(row < 0 || row > 2 || column < 0 || column > 2)
+  {
+    return Invalid;
+  }
+  return board[row][column];;
 }
 
 /**
@@ -51,5 +79,82 @@ Piece TicTacToeBoard::getPiece(int row, int column)
 **/
 Piece TicTacToeBoard::getWinner()
 {
-  return Invalid;
+  int bl = 0;
+  Piece winner, temp;
+  for(int i = 0; i < BOARDSIZE; i++)
+  {
+    temp = board[i][0];
+    if(temp == Blank)
+    {
+      bl++;
+      winner = Invalid;
+    }
+    else
+      winner = temp;
+    for(int j = 1; j < BOARDSIZE; j++)
+    {
+      if(board[i][j] == Blank)
+      {
+        bl++;
+      }
+      if(board[i][j] != temp)
+      {
+        winner = Invalid;
+      }
+    }
+    if(winner != Invalid)
+      return winner;
+  }
+  for(int i = 0; i < BOARDSIZE; i++)
+  {
+    temp = board[0][i];
+    if(temp == Blank)
+      winner == Invalid;
+    else
+      winner = temp;
+    for(int j = 1; j < BOARDSIZE; j++)
+    {
+      if(board[j][i] != temp)
+      {
+        winner = Invalid;
+        break;
+      }
+    }
+    if(winner != Invalid)
+      return winner;
+  }
+  temp = board[0][0];
+  if(temp == Blank)
+    winner == Invalid;
+  else
+    winner = temp;
+  for(int i = 1; i < BOARDSIZE; i++)
+  {
+    if(board[i][i] != temp)
+    {
+      winner = Invalid;
+      break;
+    }
+  }
+  if(winner != Invalid)
+    return winner;
+  temp = board[2][0];
+  if(temp == Blank)
+    winner == Invalid;
+  else
+    winner = temp;
+  for(int i = 0; i < BOARDSIZE; i++)
+  {
+    if(board[2-i][i] != temp)
+    {
+      winner = Invalid;
+      break;
+    }
+  }
+  if(winner != Invalid)
+    return winner;
+  if(bl == 0)
+    return Blank;
+  else
+    return Invalid;
 }
